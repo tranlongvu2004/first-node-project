@@ -10,6 +10,16 @@ app.get("/api/hello", (req, res) => {
     res.json({ message: "Hello React" });
 });
 
+app.get("/api/sum", (req, res) => {
+    const a = Number(req.query.a);
+    const b = Number(req.query.b);
+    if (!Number.isFinite(a) || !Number.isFinite(b)) {
+        res.status(400).json({ Error: "Invalid input. Please try again with valid numbers." });
+    } else {
+        res.json({ Sum: a + b });
+    }
+});
+
 app.listen(5000, () => {
     console.log("Server running on port 5000");
 });
