@@ -1,5 +1,9 @@
 const express = require("express");
 const cors = require("cors");
+const { TYPES } = require("tedious");
+const Request = require("tedious").Request;
+const connection = require('./database');
+
 
 const app = express();
 
@@ -22,6 +26,33 @@ app.get("/api/sum", (req, res) => {
     } else {
         res.json({ Sum: a + b });
     }
+});
+
+app.get("/api/users", (req, res) => {
+   const userId = Number(req.query.userId);
+   if (Number.isNaN(userId)) {
+    res.status(400).json({Error: "Invalid input. Please enter a number"});
+   }
+   const users = [];
+   const request = new Request( 'SELECT * from Users where userId = @userId',
+         (err, rowCount) => {
+            if (err) {
+                return res.status(500).json ({Error: err.message});
+            }
+           res.json(users);
+         }
+   ); 
+
+   request.addParameter('UserId', TYPES.Int, userId);
+
+   request.on ('row',columns => {
+       const user = {};
+       columns.forEach(column => {
+         user[column.metadata.colName] = column.value;
+       });
+       users.push(user);
+   });
+   connection.execSql(request);
 });
 
 const PORT = process.env.PORT || 5000;
