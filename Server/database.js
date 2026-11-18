@@ -2,17 +2,19 @@
 const Connection = require('tedious').Connection;
 
 const config = {
-    server: 'Vutraan\SQLEXPRESS',
+    server: 'DESKTOP-5NIM624',
     authentication: {
         type: 'default',
         options: {
-            userName: 'tlv',
-            password: '123456'
+            userName: 'node',
+            password: 'vutran@1'
         }
     },
     options: {
+        port: 1433,
         encrypt: true,
-        database: 'LabProjectManagement'
+        database: 'ProductManagement',
+        trustServerCertificate: true
     }
 };
 

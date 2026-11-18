@@ -30,11 +30,11 @@ app.get("/api/sum", (req, res) => {
 
 app.get("/api/users", (req, res) => {
    const userId = Number(req.query.userId);
-   if (Number.isNaN(userId)) {
+   if (userId == null || Number(userId) === 0) {
     res.status(400).json({Error: "Invalid input. Please enter a number"});
    }
    const users = [];
-   const request = new Request( 'SELECT * from Users where userId = @userId',
+   const request = new Request( 'SELECT * from products where ProductID = @userId',
          (err, rowCount) => {
             if (err) {
                 return res.status(500).json ({Error: err.message});
