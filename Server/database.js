@@ -30,4 +30,4 @@ connection.on('connect', function(err) {
 
 connection.connect();
 
-module.exports = connection;
+module.exports = {connection, isConnected: connection.state === 'LoggedIn'};

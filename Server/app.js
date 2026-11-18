@@ -33,6 +33,11 @@ app.get("/api/users", (req, res) => {
    if (userId == null || Number(userId) === 0) {
     res.status(400).json({Error: "Invalid input. Please enter a number"});
    }
+       if (!db.isConnected) {
+        return res.status(503).json({
+            Error: "Database is not connected"
+        });
+    }
    const users = [];
    const request = new Request( 'SELECT * from products where ProductID = @userId',
          (err, rowCount) => {
