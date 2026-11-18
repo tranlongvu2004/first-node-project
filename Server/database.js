@@ -2,7 +2,7 @@
 const Connection = require('tedious').Connection;
 
 const config = {
-    server: 'DESKTOP-5NIM624',
+    server: '26.66.32.50',
     authentication: {
         type: 'default',
         options: {
