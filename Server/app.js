@@ -33,7 +33,7 @@ app.get("/api/users", (req, res) => {
    if (userId == null || Number(userId) === 0) {
     res.status(400).json({Error: "Invalid input. Please enter a number"});
    }
-       if (!connect.isConnected) {
+       if (!connection.isConnected) {
         return res.status(503).json({
             Error: "Database is not connected"
         });
