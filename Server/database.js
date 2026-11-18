@@ -19,6 +19,7 @@ const config = {
 };
 
 const connection = new Connection(config);
+let isConnected = false;
 
 connection.on('connect', function(err) {
     if (err) {
@@ -28,6 +29,10 @@ connection.on('connect', function(err) {
     }
 });
 
+connection.on('end', function() {
+    console.log('Connection closed.');
+    isConnected = false;
+});
 connection.connect();
 
-module.exports = {connection, isConnected: connection.state === 'LoggedIn'};
+module.exports = {connection, get isConnected() { return isConnected; } };
