@@ -20,11 +20,7 @@ if (missingEnvironmentVariables.length > 0) {
 }
 
 const config = {
-<<<<<<< Updated upstream
-    server: 'DESKTOP-5NIM624',
-=======
     server: process.env.DB_SERVER,
->>>>>>> Stashed changes
     authentication: {
         type: 'default',
         options: {
