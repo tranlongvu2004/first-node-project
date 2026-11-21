@@ -1,20 +1,42 @@
 
+require('dotenv').config();
+
 const Connection = require('tedious').Connection;
 
+const requiredEnvironmentVariables = [
+    'DB_SERVER',
+    'DB_USERNAME',
+    'DB_PASSWORD',
+    'DB_NAME'
+];
+
+const missingEnvironmentVariables = requiredEnvironmentVariables
+    .filter((name) => !process.env[name]);
+
+if (missingEnvironmentVariables.length > 0) {
+    throw new Error(
+        `Missing required environment variables: ${missingEnvironmentVariables.join(', ')}`
+    );
+}
+
 const config = {
+<<<<<<< Updated upstream
     server: 'DESKTOP-5NIM624',
+=======
+    server: process.env.DB_SERVER,
+>>>>>>> Stashed changes
     authentication: {
         type: 'default',
         options: {
-            userName: 'node',
-            password: 'vutran@1'
+            userName: process.env.DB_USERNAME,
+            password: process.env.DB_PASSWORD
         }
     },
     options: {
-        port: 1433,
+        port: Number(process.env.DB_PORT || 1433),
         encrypt: true,
-        database: 'ProductManagement',
-        trustServerCertificate: true
+        database: process.env.DB_NAME,
+        trustServerCertificate: false
     }
 };
 
@@ -24,6 +46,7 @@ connection.on('connect', function(err) {
     if (err) {
         console.error('Kết nối thất bại:', err);
     } else {
+        isConnected = true;
         console.log('Connected to SQL Server!');
     }
 });

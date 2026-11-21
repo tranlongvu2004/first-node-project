@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const { TYPES } = require("tedious");
@@ -7,8 +9,34 @@ const connection = require('./database');
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Origin not allowed"));
+        }
+    }
+}));
 app.use(express.json());
+
+const apiAuthToken = process.env.API_AUTH_TOKEN;
+if (!apiAuthToken) {
+    throw new Error("Missing required environment variable: API_AUTH_TOKEN");
+}
+
+function requireApiAuthentication(req, res, next) {
+    const authorization = req.get("authorization");
+    if (authorization !== `Bearer ${apiAuthToken}`) {
+        return res.status(401).json({ Error: "Authentication required" });
+    }
+    return next();
+}
 
 app.get('/', (req, res) => {
     res.send('Thành công!');
@@ -28,16 +56,17 @@ app.get("/api/sum", (req, res) => {
     }
 });
 
-app.get("/api/users", (req, res) => {
+app.get("/api/users", requireApiAuthentication, (req, res) => {
    const userId = Number(req.query.userId);
-   if (userId == null || Number(userId) === 0) {
-    res.status(400).json({Error: "Invalid input. Please enter a number"});
+   if (!Number.isInteger(userId) || userId <= 0) {
+    return res.status(400).json({Error: "Invalid input. Please enter a positive integer"});
    }
    const users = [];
    const request = new Request( 'SELECT * from products where ProductID = @userId',
          (err, rowCount) => {
             if (err) {
-                return res.status(500).json ({Error: err.message});
+                console.error("Database query failed:", err);
+                return res.status(500).json ({Error: "Database query failed"});
             }
            res.json(users);
          }
